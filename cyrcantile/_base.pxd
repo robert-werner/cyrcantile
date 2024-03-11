@@ -66,3 +66,11 @@ cdef LngLat lngLat(float x, float y, bint truncate):
         lngLat = truncate_lnglat(lng, lat)
         lng, lat = lngLat.lng, lngLat.lat
     return LngLat(lng, lat)
+
+cdef LngLat ul(Tile tile):
+    xtile, ytile, zoom = tile.x, tile.y, tile.z
+    Z2 = pow(2, zoom)
+    lon_deg = xtile / Z2 * 360.0 - 180.0
+    lat_rad = atan(sinh(M_PI * (1-2 * ytile / Z2)))
+    lat_deg = degrees(lat_rad)
+    return LngLat(lon_deg, lat_deg)
