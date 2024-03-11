@@ -1,4 +1,4 @@
-from libc.math cimport M_PI, log, tan, atan, exp
+from libc.math cimport M_PI, log, tan, atan, exp, sinh
 
 cdef double radians(double degrees):
     return degrees * (M_PI / 180.0)
