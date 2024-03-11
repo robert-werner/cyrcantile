@@ -55,7 +55,8 @@ cdef XY xy(float lng, float lat, bint truncate):
         y = float("inf")
     else:
         y = 6378137.0 * log(tan((M_PI * 0.25) + (0.5 * radians(lat))))
-
+    return XY(x,y)
+    
 cdef LngLat lngLat(int x, int y, bint truncate):
     lng, lat = (
         x * (180 / M_PI) / 6378137.0,
