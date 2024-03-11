@@ -1,4 +1,4 @@
-from libc.math cimport M_PI, log, tan, atan, exp, sinh
+from libc.math cimport M_PI, log, tan, atan, exp, sinh, floor, sin
 
 cdef struct MinMax:
     int min
@@ -104,3 +104,66 @@ cdef int _getBboxZoom(Bbox bbox):
 
 cdef rshift(double val, int n):
     return (val % 0x100000000) >> n
+
+cdef XY _xy(double lng, double lat, bint truncate):
+
+    if truncate:
+        lng, lat = truncate_lnglat(lng, lat)
+
+    x = lng / 360.0 + 0.5
+    sinlat = sin(radians(lat))
+
+    y = 0.5 - 0.25 * log((1.0 + sinlat) / (1.0 - sinlat)) / M_PI
+    
+    return XY(x,y)
+
+cdef Tile tile(double lng, double lat, int zoom, bint truncate):
+    xy_ = _xy(lng, lat, truncate=truncate)
+    x, y = xy_.x, xy_.y
+    
+    Z2 = pow(2, zoom)
+
+    if x <= 0:
+        xtile = 0
+    elif x >= 1:
+        xtile = int(Z2 - 1)
+    else:
+        # To address loss of precision in round-tripping between tile
+        # and lng/lat, points within EPSILON of the right side of a tile
+        # are counted in the next tile over.
+        xtile = int(floor((x + 1e-14) * Z2))
+
+    if y <= 0:
+        ytile = 0
+    elif y >= 1:
+        ytile = int(Z2 - 1)
+    else:
+        ytile = int(floor((y + 1e-14) * Z2))
+
+    return Tile(xtile, ytile, zoom)
+
+
+cdef bounding_tile(LngLatBbox bbox, bint truncate):
+
+    w, s, e, n = bbox.west, bbox.south, bbox.east, bbox.north
+
+    if truncate:
+        w, s = truncate_lnglat(w, s)
+        e, n = truncate_lnglat(e, n)
+
+    e = e - 1e-11
+    s = s + 1e-11
+
+    tmin = tile(w, n, 32, 0)
+    tmax = tile(e, s, 32, 0)
+
+    cell = tmin[:2] + tmax[:2]
+    z = _getBboxZoom(Bbox(tmin[:2], tmax[:2]))
+
+    if z == 0:
+        return Tile(0, 0, 0)
+
+    x = rshift(cell[0], (32 - z))
+    y = rshift(cell[1], (32 - z))
+
+    return Tile(x, y, z)
