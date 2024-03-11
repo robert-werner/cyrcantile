@@ -6,6 +6,7 @@ cdef double radians(double degrees):
 cdef double degrees(double radians):
     return radians * (180.0 / M_PI)
 
+
 cdef struct Tile:
     int x
     int y
@@ -31,6 +32,7 @@ cdef struct XY:
     int x
     int y
 
+    
 cdef LngLat truncate_lnglat(float lng, float lat):
     if lng > 180.0:
         lng = 180
@@ -41,8 +43,6 @@ cdef LngLat truncate_lnglat(float lng, float lat):
     elif lat < -90.0:
         lat = -90.0
     return LngLat(lng,lat)
-
-
 
 cdef XY xy(float lng, float lat, bint truncate):
     if truncate:
