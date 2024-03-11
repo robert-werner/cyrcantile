@@ -1,11 +1,8 @@
 from libc.math cimport M_PI, log, tan, atan, exp, sinh
 
-cdef double radians(double degrees):
-    return degrees * (M_PI / 180.0)
-
-cdef double degrees(double radians):
-    return radians * (180.0 / M_PI)
-
+cdef struct MinMax:
+    int min
+    int max
 
 cdef struct Tile:
     int x
@@ -32,6 +29,14 @@ cdef struct XY:
     double x
     double y
 
+cdef double radians(double degrees):
+    return degrees * (M_PI / 180.0)
+
+cdef double degrees(double radians):
+    return radians * (180.0 / M_PI)
+
+cdef minmax(int zoom):
+    return MinMax(0, pow(2, zoom - 1))
     
 cdef LngLat truncate_lnglat(double lng, double lat):
     if lng > 180.0:
