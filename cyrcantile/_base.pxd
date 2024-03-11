@@ -180,3 +180,30 @@ cdef quadkey(Tile tile):
             digit += 2
         qk.append(str(digit))
     return "".join(qk)
+
+cdef Tile quadkey_to_tile(str qk):
+    """Get the tile corresponding to a quadkey
+
+    Parameters
+    ----------
+    qk : str
+        A quadkey string.
+
+    Returns
+    -------
+    Tile
+
+    """
+    if len(qk) == 0:
+        return Tile(0, 0, 0)
+    xtile, ytile = 0, 0
+    for i, digit in enumerate(reversed(qk)):
+        mask = 1 << i
+        if digit == "1":
+            xtile = xtile | mask
+        elif digit == "2":
+            ytile = ytile | mask
+        elif digit == "3":
+            xtile = xtile | mask
+            ytile = ytile | mask
+    return Tile(xtile, ytile, i + 1)
