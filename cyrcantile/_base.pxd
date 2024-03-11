@@ -3,6 +3,8 @@ from libc.math cimport M_PI, log, tan, atan, exp
 cdef double radians(double degrees):
     return degrees * (M_PI / 180.0)
 
+cdef double degrees(double radians):
+    return radians * (180.0 / M_PI)
 
 cdef struct Tile:
     int x
