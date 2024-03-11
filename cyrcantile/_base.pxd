@@ -143,7 +143,7 @@ cdef Tile tile(double lng, double lat, int zoom, bint truncate):
     return Tile(xtile, ytile, zoom)
 
 
-cdef Tile bounding_tile(LngLatBbox bbox, bint truncate):
+cdef bounding_tile(LngLatBbox bbox, bint truncate):
 
     w, s, e, n = bbox.west, bbox.south, bbox.east, bbox.north
 
@@ -167,3 +167,16 @@ cdef Tile bounding_tile(LngLatBbox bbox, bint truncate):
     y = rshift(cell[1], (32 - z))
 
     return Tile(x, y, z)
+
+cdef quadkey(Tile tile):
+    xtile, ytile, zoom = tile.x, tile.y, tile.z
+    qk = []
+    for z in range(zoom, 0, -1):
+        digit = 0
+        mask = 1 << (z - 1)
+        if xtile & mask:
+            digit += 1
+        if ytile & mask:
+            digit += 2
+        qk.append(str(digit))
+    return "".join(qk)
