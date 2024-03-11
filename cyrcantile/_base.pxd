@@ -29,8 +29,8 @@ cdef struct Bbox:
     float top
 
 cdef struct XY:
-    int x
-    int y
+    float x
+    float y
 
     
 cdef LngLat truncate_lnglat(float lng, float lat):
@@ -57,7 +57,7 @@ cdef XY xy(float lng, float lat, bint truncate):
         y = 6378137.0 * log(tan((M_PI * 0.25) + (0.5 * radians(lat))))
     return XY(x,y)
     
-cdef LngLat lngLat(int x, int y, bint truncate):
+cdef LngLat lngLat(float x, float y, bint truncate):
     lng, lat = (
         x * (180 / M_PI) / 6378137.0,
         ((M_PI * 0.5) - 2.0 * atan(exp(-y / 6378137.0))) * (180 / M_PI),
