@@ -75,7 +75,7 @@ cdef LngLat ul(Tile tile):
     lat_deg = degrees(lat_rad)
     return LngLat(lon_deg, lat_deg)
 
-cdef bounds(Tile tile):
+cdef LngLatBbox bounds(Tile tile):
     xtile, ytile, zoom = tile.x, tile.y, tile.z
     Z2 = pow(2, zoom)
     ul_lon_deg = xtile / Z2 * 360.0 - 180.0
