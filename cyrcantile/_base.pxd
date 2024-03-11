@@ -92,3 +92,15 @@ cdef LngLatBbox bounds(Tile tile):
     lr_lat_deg = degrees(lr_lat_rad)
 
     return LngLatBbox(ul_lon_deg, lr_lat_deg, lr_lon_deg, ul_lat_deg)
+
+cdef int _getBboxZoom(Bbox bbox):
+    MAX_ZOOM = 28
+    for z in range(0, MAX_ZOOM):
+        mask = 1 << (32 - (z + 1))
+        if (bbox.left & mask) != (bbox.right & mask) or (bbox.bottom & mask) != (bbox.top & mask):
+            return z
+    return MAX_ZOOM
+
+
+cdef rshift(double val, int n):
+    return (val % 0x100000000) >> n
