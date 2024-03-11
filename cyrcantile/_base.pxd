@@ -143,7 +143,7 @@ cdef Tile tile(double lng, double lat, int zoom, bint truncate):
     return Tile(xtile, ytile, zoom)
 
 
-cdef bounding_tile(LngLatBbox bbox, bint truncate):
+cdef Tile bounding_tile(LngLatBbox bbox, bint truncate):
 
     w, s, e, n = bbox.west, bbox.south, bbox.east, bbox.north
 
